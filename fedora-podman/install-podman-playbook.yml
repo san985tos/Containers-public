@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  become: true
+
+  tasks:
+    - name: Install podman on Fedora
+      shell: |
+        sudo dnf -y copr enable rhcontainerbot/podman4
+        sudo dnf -y install podman
+
+    - name: Install git on Fedora
+      shell: |
+        sudo dnf -y install git
+
+    - name: Install zsh
+      shell: |
+        sudo dnf -y install zsh
+
+    - name: Install wget and curl
+      shell: |
+        sudo dnf -y install wget curl
+
+    - name: Install Oh-my-Zsh
+      shell: |
+        curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh --
+        sudo sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="fino-time"/g' /root/.zshrc
+
+    - name: Install policycoreutils-python-utils to use semanage
+      shell: |
+        sudo yum install -y policycoreutils-python-utils
+
+    - name: Install x11, Dolphin and Chrome
+      shell: |
+        sudo yum -y install xorg-x11-xauth
+        sudo yum -y install xorg-x11-apps.x86_64
+        sudo yum install -y dolphin
+        sudo yum install wget dnf git -y
+        sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+        sudo dnf -y localinstall google-chrome-stable_current_x86_64.rpm
+        sudo echo "alias chrome='google-chrome --window-size=800,600 --no-sandbox'" >> /home/vagrant/.bashrc

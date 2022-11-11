@@ -1,0 +1,26 @@
+IMAGE_NAME = "fedora/34-cloud-base"
+
+Vagrant.configure("2") do |config|
+    config.ssh.insert_key = false
+    config.ssh.forward_agent = true
+    config.ssh.forward_x11 = true
+    
+    config.vm.provider "virtualbox" do |v|
+        v.memory = 2048
+        v.cpus = 2
+    end
+      
+    config.vm.define "fedor-podman" do |fedora|
+        fedora.vm.box = IMAGE_NAME
+        fedora.vm.network "private_network", ip: "192.168.56.11"
+        fedora.vm.hostname = "fedora-podman"
+        fedora.vm.provision "file", source: "./install-podman-playbook.yml", destination: "$HOME/"
+        fedora.vm.provision "shell", inline: <<-SHELL
+          echo "Install Ansible   --------------------"
+          sudo yum install -y ansible
+          sudo ansible-playbook install-podman-playbook.yml
+        SHELL
+
+    end
+
+end
